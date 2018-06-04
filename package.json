@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/beingbishwa/todo-api/issues"
   },
-  "homepage": "https://github.com/beingbishwa/todo-api#readme"
+  "homepage": "https://github.com/beingbishwa/todo-api#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
 }
