@@ -9,13 +9,18 @@ mongoose.connect('mongodb://localhost:27017/TodoApp')
 // make todo model
 const Todo = mongoose.model('Todo', {
     text:{
-        type: String
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 1
     },
     completed: {
-        type: String
+        type: Boolean,
+        default: false
     },
     completedAt: {
-        type: Number
+        type: Number,
+        default: null
     }
 })
 
