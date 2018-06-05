@@ -6,6 +6,7 @@ const _ = require('lodash')
 const {mongoose} = require('./../db/mongo-connect')
 const {Todo} = require('./../db/collections/todo')
 
+const port = process.env.PORT || 3000
 const app = express()
 
 // parse incoming and outgoing contents
@@ -141,5 +142,5 @@ app.delete('/todo/:id', (req, res) => {
 })
 
 app.listen(3000, () => {
-    console.log('Connection established on port 3000')
+    console.log(`Connection established on port ${port}`)
 })
