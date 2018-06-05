@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const {ObjectID} = require('mongodb')
 
 const {mongoose} = require('./../db/mongo-connect')
 const {Todo} = require('./../db/collections/todo')
@@ -46,7 +47,31 @@ app.post('/todos', (req, res) => {
     })
 })
 
-
+/**
+ * GET /todo/:id
+ * get individual todo
+ */
+app.get('/todo/:id', (req, res) => {
+    const id = req.params.id
+    if(!ObjectID.isValid(id)){
+        res.status(404).send({
+            message: 'ID doesn\'t exist'
+        })
+    }
+    Todo.findById(id).then(data => {
+        if(!data){
+            res.status(404).send({
+                message: 'ID doesn\'t exist'
+            })
+        }else{
+            res.status(200).send({data})
+        }
+    }).catch(err => {
+        res.status(400).send({
+            message: 'An error occured. Try Again'
+        })
+    })
+})
 app.listen(3000, () => {
     console.log('Connection established on port 3000')
 })
