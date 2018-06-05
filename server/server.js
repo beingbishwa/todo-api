@@ -1,9 +1,13 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 
 const {mongoose} = require('./../db/mongo-connect')
 const {Todo} = require('./../db/collections/todo')
 
 const app = express()
+
+// parse incoming and outgoing contents
+app.use(bodyParser.json())
 
 /**
  * GET /todos
@@ -24,17 +28,24 @@ app.get('/todos', (req, res) => {
     })
 })
 
-// const newTodo = new Todo({
-//     text: 'Hello',
-//     completed: true
-// })
+/**
+ * POST /todos
+ * add a new todo
+ */
+app.post('/todos', (req, res) => {
+    const newTodo = new Todo({
+        text: req.body.text
+    })
 
-// newTodo.save().then((doc) => {
-//     console.log('Saved todo successfully')
-//     console.log(doc)
-// }).catch((e) => {
-//     console.log('Unable to save todo')
-// })
+    newTodo.save().then(data => {
+        res.status(200).send({data})
+    }).catch(err => {
+        res.status(400).send({
+            message: 'An error occured.Try Again'
+        })
+    })
+})
+
 
 app.listen(3000, () => {
     console.log('Connection established on port 3000')
