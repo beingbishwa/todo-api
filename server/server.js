@@ -111,6 +111,35 @@ app.patch('/todo/:id', (req, res) => {
     })
 })
 
+/**
+ * DELETE /todo/:id
+ * delete individual todo
+ */
+app.delete('/todo/:id', (req, res) => {
+    // validate id
+    const id = req.params.id
+    if(!ObjectID.isValid(id)){
+        res.status(404).send({
+            message: 'ID doesn\'t exist'
+        })
+    }
+
+    // delete data
+    Todo.findByIdAndRemove(id).then(data => {
+        if(data){
+            res.status(200).send({data})
+        }else{
+            res.status(404).send({
+                message: 'ID doesn\'t exist'
+            })
+        }
+    }).catch(err => {
+        res.status(400).send({
+            message: 'An error occured. Try Again'
+        })
+    })
+})
+
 app.listen(3000, () => {
     console.log('Connection established on port 3000')
 })
