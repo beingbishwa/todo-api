@@ -1,3 +1,5 @@
+require('../config/config')
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const {ObjectID} = require('mongodb')
@@ -141,6 +143,9 @@ app.delete('/todo/:id', (req, res) => {
     })
 })
 
-app.listen(3000, () => {
+/**
+ * Start server on specified port
+ */
+app.listen(process.env.PORT, () => {
     console.log(`Connection established on port ${port}`)
 })
