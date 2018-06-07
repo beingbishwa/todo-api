@@ -150,9 +150,10 @@ app.delete('/todo/:id', (req, res) => {
 app.post('/users', (req, res) => {
     const user = new User(_.pick(req.body, ['email', 'password']))
     user.save().then(data => {
-        res.status(200).send({data})
+        return user.generateAuthToken()
+    }).then(token => {
+        res.header('x-auth', token).status(200).send({user})
     }).catch(err => {
-        console.log(err)
         res.status(400).send({
             message: 'An error occured. Try Again'
         })

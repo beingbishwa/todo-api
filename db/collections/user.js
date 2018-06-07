@@ -1,6 +1,7 @@
 const validator = require('validator')
 const _ = require('lodash')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 const {mongoose} = require('./../mongo-connect')
 
@@ -22,7 +23,19 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 8
-    }
+    },
+    tokens: [
+        {
+            access: {
+                type: String,
+                required: true
+            },
+            token: {
+                type: String,
+                required: true
+            }
+        }
+    ]
 })
 
 // hash password before saving
@@ -42,6 +55,18 @@ UserSchema.pre('save', function(next) {
 UserSchema.methods.toJSON = function() {
     const user = this
     return _.pick(user, ['_id', 'email'])
+}
+
+UserSchema.methods.generateAuthToken = function() {
+    const user = this
+    const access = 'auth'
+    const token = jwt.sign({_id: user._id.toHexString(), access}, 'secretkey').toString()
+
+    user.tokens.push({access, token})
+
+    return user.save().then(() => {
+        return token
+    })
 }
 
 UserSchema.statics.findByLoginDetails = function (email, password) {
