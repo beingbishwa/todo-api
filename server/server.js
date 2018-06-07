@@ -7,8 +7,8 @@ const _ = require('lodash')
 
 const {mongoose} = require('./../db/mongo-connect')
 const {Todo} = require('./../db/collections/todo')
+const {User} = require('./../db/collections/user')
 
-const port = process.env.PORT || 3000
 const app = express()
 
 // parse incoming and outgoing contents
@@ -144,8 +144,24 @@ app.delete('/todo/:id', (req, res) => {
 })
 
 /**
+ * POST /users
+ * Add new user
+ */
+app.post('/users', (req, res) => {
+    const user = new User(_.pick(req.body, ['email', 'password']))
+    user.save().then(data => {
+        res.status(200).send({data})
+    }).catch(err => {
+        console.log(err)
+        res.status(400).send({
+            message: 'An error occured. Try Again'
+        })
+    })
+})
+
+/**
  * Start server on specified port
  */
 app.listen(process.env.PORT, () => {
-    console.log(`Connection established on port ${port}`)
+    console.log(`Connection established on port ${process.env.PORT}`)
 })

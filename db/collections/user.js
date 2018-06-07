@@ -1,8 +1,9 @@
 const validator = require('validator')
+const _ = require('lodash')
 
 const {mongoose} = require('./../mongo-connect')
 
-const User = mongoose.model('User', {
+const UserSchema = new mongoose.Schema({
     email:{
         type: String,
         required: true,
@@ -22,5 +23,12 @@ const User = mongoose.model('User', {
         minlength: 8
     }
 })
+
+UserSchema.methods.toJSON = function() {
+    const user = this
+    return _.pick(user, ['_id', 'email'])
+}
+
+const User = mongoose.model('User', UserSchema)
 
 module.exports = {User}
