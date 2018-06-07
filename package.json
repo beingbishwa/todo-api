@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/beingbishwa/todo-api#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "lodash": "^4.17.10",

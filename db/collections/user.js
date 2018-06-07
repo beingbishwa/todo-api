@@ -1,5 +1,6 @@
 const validator = require('validator')
 const _ = require('lodash')
+const bcrypt = require('bcryptjs')
 
 const {mongoose} = require('./../mongo-connect')
 
@@ -22,6 +23,20 @@ const UserSchema = new mongoose.Schema({
         required: true,
         minlength: 8
     }
+})
+
+// hash password before saving
+UserSchema.pre('save', function(next) {
+    const user = this
+    // generate salt
+    bcrypt.genSalt(10, (err, salt) => {
+        // hash password
+        bcrypt.hash(user.password, salt, (err, hash) => {
+            user.password = hash
+            next()
+        })
+    })
+    
 })
 
 UserSchema.methods.toJSON = function() {
