@@ -160,6 +160,22 @@ app.post('/users', (req, res) => {
 })
 
 /**
+ * POST /user/login
+ * Login existing user
+ */
+app.post('/user/login', (req, res) => {
+    const body = _.pick(req.body, ['email', 'password'])
+    User.findByLoginDetails(body.email, body.password)
+    .then(data => {
+        res.status(200).send({data})
+    }).catch(err => {
+        res.status(404).send({
+            message: err
+        })
+    })
+})
+
+/**
  * Start server on specified port
  */
 app.listen(process.env.PORT, () => {

@@ -44,6 +44,26 @@ UserSchema.methods.toJSON = function() {
     return _.pick(user, ['_id', 'email'])
 }
 
+UserSchema.statics.findByLoginDetails = function (email, password) {
+     var User = this
+     return User.findOne({email}).then(user => {
+        if(!user){
+            return Promise.reject('Invalid details provided')
+        }
+        
+        return new Promise((resolve, reject) => {
+            // compare password -> if true, return promise so, then can be used in calling function
+            bcrypt.compare(password, user.password, (err, res) => {
+                if(res){
+                    resolve(user)
+                }else{
+                    reject('Invalid details provided')
+                }
+            })
+        })
+    })
+}
+
 const User = mongoose.model('User', UserSchema)
 
 module.exports = {User}
