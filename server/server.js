@@ -168,7 +168,9 @@ app.post('/user/login', (req, res) => {
     const body = _.pick(req.body, ['email', 'password'])
     User.findByLoginDetails(body.email, body.password)
     .then(data => {
-        res.status(200).send({data})
+        return data.generateAuthToken().then(token => {
+            res.header('x-auth', token).status(200).send({data}) 
+        })
     }).catch(err => {
         res.status(404).send({
             message: err
