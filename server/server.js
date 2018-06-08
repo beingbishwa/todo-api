@@ -19,8 +19,8 @@ app.use(bodyParser.json())
  * GET /todos
  * get all todos
  */
-app.get('/todos', (req, res) => {
-    Todo.find().then(data => {
+app.get('/todos', authenticate, (req, res) => {
+    Todo.find({createdBy: req.user._id}).then(data => {
         if(data.length > 0) res.status(200).send({data})
         else {
             res.status(200).send({
@@ -38,9 +38,10 @@ app.get('/todos', (req, res) => {
  * POST /todos
  * add a new todo
  */
-app.post('/todos', (req, res) => {
+app.post('/todos', authenticate, (req, res) => {
     const newTodo = new Todo({
-        text: req.body.text
+        text: req.body.text,
+        createdBy: req.user._id
     })
 
     newTodo.save().then(data => {
@@ -56,17 +57,17 @@ app.post('/todos', (req, res) => {
  * GET /todo/:id
  * get individual todo
  */
-app.get('/todo/:id', (req, res) => {
-    const id = req.params.id
-    if(!ObjectID.isValid(id)){
+app.get('/todo/:id', authenticate, (req, res) => {
+    const _id = req.params.id
+    if(!ObjectID.isValid(_id)){
         res.status(404).send({
             message: 'ID doesn\'t exist'
         })
     }
-    Todo.findById(id).then(data => {
+    Todo.findOne({_id, createdBy: req.user._id}).then(data => {
         if(!data){
             res.status(404).send({
-                message: 'ID doesn\'t exist'
+                message: 'Todo not found'
             })
         }else{
             res.status(200).send({data})
@@ -84,8 +85,8 @@ app.get('/todo/:id', (req, res) => {
  */
 app.patch('/todo/:id', (req, res) => {
     // check if id is valid or not
-    const id = req.params.id
-    if(!ObjectID.isValid(id)){
+    const _id = req.params.id
+    if(!ObjectID.isValid(_id)){
         res.status(404).send({
             message: 'ID doesn\'t exist'
         })
@@ -100,12 +101,12 @@ app.patch('/todo/:id', (req, res) => {
     }
     
     // update data
-    Todo.findByIdAndUpdate(id, {$set: newData}, {new: true}).then(data => {
+    Todo.findOneAndUpdate({_id, createdBy: req.user._id}, {$set: newData}, {new: true}).then(data => {
         if(data){
             res.status(200).send({data})
         }else{
             res.status(404).send({
-                message: 'ID doesn\'t exist'
+                message: 'Todo not found'
             })
         }
     }).catch(err => {
@@ -121,20 +122,20 @@ app.patch('/todo/:id', (req, res) => {
  */
 app.delete('/todo/:id', (req, res) => {
     // validate id
-    const id = req.params.id
-    if(!ObjectID.isValid(id)){
+    const _id = req.params.id
+    if(!ObjectID.isValid(_id)){
         res.status(404).send({
             message: 'ID doesn\'t exist'
         })
     }
 
     // delete data
-    Todo.findByIdAndRemove(id).then(data => {
+    Todo.findOneAndRemove({_id, createdBy: req.user._id}).then(data => {
         if(data){
             res.status(200).send({data})
         }else{
             res.status(404).send({
-                message: 'ID doesn\'t exist'
+                message: 'Todo not found'
             })
         }
     }).catch(err => {
@@ -184,7 +185,7 @@ app.post('/user/login', (req, res) => {
  * Get logged in user profile
  */
 app.get('/user/me', authenticate,  (req, res) => {
-    res.status(200).send({data: req.data})
+    res.status(200).send({data: req.user})
 })
 
 /**
