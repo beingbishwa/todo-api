@@ -179,6 +179,25 @@ app.post('/user/login', (req, res) => {
 })
 
 /**
+ * GET /user/me
+ * Get logged in user profile
+ */
+app.get('/user/me', (req, res) => {
+    // get token from header
+    const token = req.header('x-auth')
+    // check if the user with token exist
+    User.findByToken(token)
+    .then(data => {
+        // return user data
+        res.status(200).send({data})
+    }).catch(err => {
+        res.status(401).send({
+            message: err
+        })
+    })
+})
+
+/**
  * Start server on specified port
  */
 app.listen(process.env.PORT, () => {

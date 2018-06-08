@@ -74,7 +74,7 @@ UserSchema.methods.generateAuthToken = function() {
 }
 
 UserSchema.statics.findByLoginDetails = function (email, password) {
-     var User = this
+     const User = this
      return User.findOne({email}).then(user => {
         if(!user){
             return Promise.reject('Invalid details provided')
@@ -90,6 +90,29 @@ UserSchema.statics.findByLoginDetails = function (email, password) {
                 }
             })
         })
+    })
+}
+
+UserSchema.statics.findByToken = function (token) {
+    const User = this
+    let decoded
+
+    try {
+        decoded = jwt.verify(token, 'secretkey')
+    } catch (error) {
+        return Promise.reject('Unauthorized')
+    }
+
+    return User.findOne({
+        '_id': decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
+    }).then(user => {
+        if(!user){
+            return Promise.reject('Unauthorized')
+        }else{
+            return Promise.resolve(user)
+        }
     })
 }
 
