@@ -188,6 +188,20 @@ app.get('/user/me', authenticate,  (req, res) => {
 })
 
 /**
+ * POST /user/logout
+ * Logout user
+ */
+app.post('/user/logout', authenticate, (req, res) => {
+    req.user.removeToken(req.token).then(() => {
+        res.status(200).send()
+    }).catch(err => {
+        res.status(400).send({
+            message: 'An error occured. Try Again'
+        })
+    })
+})
+
+/**
  * Start server on specified port
  */
 app.listen(process.env.PORT, () => {

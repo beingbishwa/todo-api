@@ -6,7 +6,7 @@ const authenticate = function(req, res, next) {
     // check if the user with token exist
     User.findByToken(token)
     .then(data => {
-        req.data = data
+        req.user = data
         req.token = token
         next()
     }).catch(err => {
