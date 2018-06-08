@@ -8,6 +8,7 @@ const _ = require('lodash')
 const {mongoose} = require('./../db/mongo-connect')
 const {Todo} = require('./../db/collections/todo')
 const {User} = require('./../db/collections/user')
+const {authenticate} = require('./../middleware/authenticate')
 
 const app = express()
 
@@ -182,19 +183,8 @@ app.post('/user/login', (req, res) => {
  * GET /user/me
  * Get logged in user profile
  */
-app.get('/user/me', (req, res) => {
-    // get token from header
-    const token = req.header('x-auth')
-    // check if the user with token exist
-    User.findByToken(token)
-    .then(data => {
-        // return user data
-        res.status(200).send({data})
-    }).catch(err => {
-        res.status(401).send({
-            message: err
-        })
-    })
+app.get('/user/me', authenticate,  (req, res) => {
+    res.status(200).send({data: req.data})
 })
 
 /**
