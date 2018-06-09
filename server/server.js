@@ -1,14 +1,14 @@
-require('../config/config')
+require('./config/config')
 
 const express = require('express')
 const bodyParser = require('body-parser')
 const {ObjectID} = require('mongodb')
 const _ = require('lodash')
 
-const {mongoose} = require('./../db/mongo-connect')
-const {Todo} = require('./../db/collections/todo')
-const {User} = require('./../db/collections/user')
-const {authenticate} = require('./../middleware/authenticate')
+const {mongoose} = require('./db/mongo-connect')
+const {Todo} = require('./db/collections/todo')
+const {User} = require('./db/collections/user')
+const {authenticate} = require('./middleware/authenticate')
 
 const app = express()
 
